@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pricing Health Diagnostic</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Public+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#403D3D;
+font-family:'Public Sans',sans-serif;
+color:#C7C7C7;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:60px 30px;
+}
+
+h1{
+font-family:'Playfair Display',serif;
+font-size:44px;
+color:#BAA36C;
+margin-bottom:10px;
+}
+
+.subtitle{
+font-size:18px;
+line-height:1.6;
+margin-bottom:50px;
+}
+
+.section{
+margin-bottom:40px;
+}
+
+.section h2{
+font-family:'Playfair Display',serif;
+color:#BAA36C;
+margin-bottom:10px;
+}
+
+label{
+display:block;
+margin-top:14px;
+font-size:14px;
+}
+
+input, select{
+width:100%;
+padding:12px;
+margin-top:6px;
+border:none;
+border-radius:4px;
+background:#C7C7C7;
+color:#000;
+font-size:14px;
+}
+
+button{
+margin-top:40px;
+background:#BAA36C;
+border:none;
+padding:16px 28px;
+font-size:16px;
+font-weight:600;
+border-radius:4px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+#successMessage{
+display:none;
+margin-top:40px;
+background:#C7C7C7;
+color:#000;
+padding:30px;
+border-radius:6px;
+font-size:18px;
+text-align:center;
+}
+
+.footer{
+margin-top:60px;
+font-size:13px;
+color:#888;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Pricing Health Diagnostic</h1>
+
+<p class="subtitle">
+Most businesses unknowingly undercharge because they underestimate the real cost of delivering their service.
+This diagnostic evaluates your pricing structure and determines whether your current model supports sustainable growth.
+</p>
+
+<form id="pricingForm"
+action="https://formspree.io/f/YOUR_FORMSPREE_ID"
+method="POST">
+
+<div class="section">
+
+<h2>Delivery Economics</h2>
+
+<label>Direct cost per project / unit ($)</label>
+<input type="number" name="direct_cost" required>
+
+<label>Hours required to deliver each client</label>
+<input type="number" name="hours_per_client" required>
+
+<label>Your hourly value ($)</label>
+<input type="number" name="hourly_rate" required>
+
+</div>
+
+<div class="section">
+
+<h2>Operating Structure</h2>
+
+<label>Total monthly overhead ($)</label>
+<input type="number" name="overhead" required>
+
+<label>Desired monthly founder salary ($)</label>
+<input type="number" name="founder_salary" required>
+
+<label>Clients / projects per month</label>
+<input type="number" name="client_volume" required>
+
+</div>
+
+<div class="section">
+
+<h2>Pricing Model</h2>
+
+<label>Current price per client ($)</label>
+<input type="number" name="current_price" required>
+
+<label>Desired profit margin (%)</label>
+<input type="number" name="desired_margin" required>
+
+<label>Market positioning</label>
+
+<select name="market_position">
+
+<option value="budget">Budget / Entry Level</option>
+<option value="standard">Standard Market</option>
+<option value="premium">Premium</option>
+<option value="luxury">High-End Specialist</option>
+
+</select>
+
+</div>
+
+<div class="section">
+
+<h2>Your Details</h2>
+
+<label>Name</label>
+<input type="text" name="name" required>
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Company</label>
+<input type="text" name="company">
+
+<label>Position</label>
+<input type="text" name="position">
+
+</div>
+
+<!-- Hidden calculated fields -->
+
+<input type="hidden" name="true_cost" id="trueCost">
+<input type="hidden" name="recommended_price" id="recommendedPrice">
+<input type="hidden" name="current_margin" id="currentMargin">
+<input type="hidden" name="break_even_clients" id="breakEven">
+<input type="hidden" name="revenue_opportunity" id="revenueOpportunity">
+<input type="hidden" name="pricing_gap" id="pricingGap">
+
+<button type="submit">Submit Diagnostic</button>
+
+</form>
+
+<div id="successMessage">
+
+Thank you for your submission.<br><br>
+Kaylee-Jane will email your results within 24 hours.
+
+</div>
+
+<div class="footer">
+Human Lab Diagnostic Instrument
+</div>
+
+</div>
+
+<script>
+
+const form=document.getElementById("pricingForm");
+
+form.addEventListener("submit",function(){
+
+let directCost=parseFloat(document.querySelector('[name="direct_cost"]').value);
+let hours=parseFloat(document.querySelector('[name="hours_per_client"]').value);
+let hourlyRate=parseFloat(document.querySelector('[name="hourly_rate"]').value);
+
+let overhead=parseFloat(document.querySelector('[name="overhead"]').value);
+let salary=parseFloat(document.querySelector('[name="founder_salary"]').value);
+let volume=parseFloat(document.querySelector('[name="client_volume"]').value);
+
+let price=parseFloat(document.querySelector('[name="current_price"]').value);
+let margin=parseFloat(document.querySelector('[name="desired_margin"]').value)/100;
+
+let laborCost=hours*hourlyRate;
+
+let overheadPerClient=(overhead+salary)/volume;
+
+let trueCost=directCost+laborCost+overheadPerClient;
+
+let recommendedPrice=trueCost*(1+margin);
+
+let currentMargin=((price-trueCost)/price)*100;
+
+let breakEven=Math.ceil((overhead+salary)/(price-(directCost+laborCost)));
+
+let pricingGap=recommendedPrice-price;
+
+let annualOpportunity=pricingGap*volume*12;
+
+document.getElementById("trueCost").value=trueCost.toFixed(2);
+document.getElementById("recommendedPrice").value=recommendedPrice.toFixed(2);
+document.getElementById("currentMargin").value=currentMargin.toFixed(2);
+document.getElementById("breakEven").value=breakEven;
+document.getElementById("pricingGap").value=pricingGap.toFixed(2);
+document.getElementById("revenueOpportunity").value=annualOpportunity.toFixed(2);
+
+setTimeout(function(){
+
+form.style.display="none";
+document.getElementById("successMessage").style.display="block";
+
+},800);
+
+});
+
+</script>
+
+</body>
+</html>
